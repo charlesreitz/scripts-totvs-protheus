@@ -1,0 +1,15 @@
+#
+#DERRUBAR SERVICOS
+#
+
+echo "******************* STOP SERVICES CTREE [BEGIN] ****************************"
+
+#
+#Derrubar Servico CtreeServer
+#
+cd /totvs11/microsiga/protheus/bin/ctreeserver/client/
+./ctstop -auto
+cd /totvs11/microsiga/adm/
+sleep 10
+
+echo "******************* STOP SERVICES CTREE [END] ****************************"

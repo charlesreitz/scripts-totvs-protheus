@@ -1,0 +1,12 @@
+echo "******************* START SERVICES TOTVS TSS [BEGIN] ****************************"
+
+ulimit -n 65535
+ulimit -s 1024
+
+#
+#Carregar Server Protheus TSS
+#
+/totvs11/microsiga/protheus/totvssped11/bin/appserver/./appsrvlinux &
+sleep 3
+
+echo "******************* START SERVICES TOTVS TSS [END] ****************************"

@@ -1,0 +1,184 @@
+#!/bin/bash
+#
+# objetivo Leitura e escrita de arquivos .ini
+#
+
+function help()
+{
+cat <<HELP
+$(basename $0) - Script para manutencao de arquivo de configuracao .ini
+
+Sintaxe: $(basename $0) <nome do arquivo .ini> <secao> <parametro> [valor]
+
+Exemplo:
+   $(basename $0) meu_ini.ini secao parametro "teste"
+   - Escreve ou sobreescreve se ja existir no arquivo meu_ini.ini na secao "secao" o parametro "parametro" com o valor "teste".
+
+   $(basename $0) meu_ini.ini secao parametro
+   - Exibe o valor do parametro "parametro" da secao "secao" no arquivo meu_ini.ini.
+
+Parametros:
+   --help  : Exibe o help do script;
+
+    Para escrever um parametro:
+     <nome do arquivo .ini> : Nome do arquivo de confiracao .ini;
+     <secao>                : Nome da secao no arquivo .ini;
+     <parametro>            : Nome do parametro da secao informada;
+     [valor]                : Valor do parametro informado;
+
+    Para ler um parametro:
+     <nome do arquivo .ini> : Nome do arquivo de confiracao .ini;
+     <secao>                : Nome da secao no arquivo .ini;
+     <parametro>            : Nome do parametro da secao informada;
+
+    Para remover um parametro:
+     [-r]                   : Remover o parametro do arquivo de configuracao;
+     <nome do arquivo .ini> : Nome do arquivo de confiracao .ini;
+     <secao>                : Nome da secao no arquivo .ini;
+     <parametro>            : Nome do parametro da secao informada;
+
+Error code:
+   0 : Sucesso na operacao;
+   1 : Secao nao encontrada;
+   2 : Parametro nao encontrado;
+   3 : Arquivo .ini nao encontrado;
+   4 : Parametros incorretos;
+
+O código do erro e retornado para o sistema utilizando a variavel de ambiente status (\$?).
+HELP
+
+exit  0;
+}
+
+function error()
+{
+   sShellName=$(basename $0)
+
+   echo "$sShellName: $1" >&2
+   echo "sintaxe: $sShellName [-r] <nome do arquivo .ini> <secao> <parametro> [valor]" >&2
+
+   exit $2;
+}
+
+if [ $# -lt 3 -o -$# -gt 4 ]; then
+   if [ "$1" == "--help" ]; then
+      help;
+   else
+      error "Parametros incorretos." 4;
+   fi
+fi
+
+getopts "rR" opt
+if [ "$opt" == "r" ]; then
+   nRemove=1;
+   shift 1;
+else
+   nRemove=0;
+fi
+
+# inicializa variaveis
+sIniFile=$1;
+sSection=$2;
+sParam=$3;
+uValue=$4;
+sContents="";
+nError=0
+
+# Valida a existência do arquivo
+if [ ! -e $sIniFile ]; then
+   error "Arquivo '$sIniFile' nao encontrado." 3;
+fi
+
+sContents=$(awk -v ACTION=${#uValue} -v REMOVE=$nRemove -v SECTION=$sSection -v PARAM=$sParam -v VALUE=$uValue '
+BEGIN{ nError = 1; }
+{
+   # Verifica se a linha atual e uma secao
+   if(match($0,/^[^;#]*\[[^\[\]]*\]/))
+   {
+      // Cria o parametro se nao existir
+      if(ACTION != 0 && lSection == 1 && nError == 2 && REMOVE == 0)
+      {
+         print PARAM"="VALUE"\n";
+         nError = 0;
+      }
+
+      lSection=0;
+
+      # Verifica se a secao atual e a secao solicitada
+      if($0 == "["SECTION"]")
+      {
+         lSection=1;
+         nError = 1;
+      }
+   }
+
+   # Secao encontrada
+   if(lSection == 1)
+   {
+      # ErrorCode para parametro nao encontrado
+      nError = (nError == 0) ? 0 : 2;
+
+      # Procura o parametro dentro da secao
+      if(match($0,"^"PARAM".*"))
+      {
+         if(REMOVE == 0)
+         {
+            # Se nao for informado o valor, apresenta o conteudo do parametro
+            if(ACTION == 0)
+            {
+               sub(PARAM"=","",$0)
+               print $0;
+            }
+            else
+               print PARAM"="VALUE;
+         }
+
+         nError = 0;
+      }
+      else
+      {
+         if(length($0) == 0 && ACTION != 0 && nError == 2 && REMOVE == 0)
+         {
+            print PARAM"="VALUE"\n";
+            nError = 0;
+         }
+         else
+            if(ACTION != 0 || REMOVE != 0)
+               print $0;
+      }
+   }
+   else
+      if(ACTION != 0 || REMOVE != 0)
+         print $0;
+}
+END{
+   // Cria o parametro se nao existir
+   if(ACTION != 0 && lSection == 1 && nError == 2 && REMOVE == 0)
+   {
+      print PARAM"="VALUE;
+      nError = 0;
+   }
+
+   // Cria a secao e o parametro se nao existirem
+   if(ACTION != 0 && nError == 1 && REMOVE == 0)
+   {
+      print "["SECTION"]"
+      print PARAM"="VALUE;
+      nError = 0;
+   }
+
+   exit nError;
+}
+' $sIniFile)
+
+nError=$?
+
+if [ $nError -eq 0 ]; then
+   if [ $nRemove -eq 1 -o ${#uValue} -ne 0 ]; then
+      echo "$sContents" > $sIniFile
+   else
+      echo "$sContents"
+   fi
+fi
+
+exit $nError;

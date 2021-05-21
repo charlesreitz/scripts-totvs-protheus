@@ -1,0 +1,21 @@
+#!/bin/bash
+echo "******************* START SERVICES DBACCESS [BEGIN] ****************************"
+#
+#Carregar dbAccess
+#
+diratual=/totvs12/
+folder=$diratual/microsiga/dbaccess
+
+export LD_LIBRARY_PATH=$folder
+#export ORACLE_HOSTNAME=totvs.polymport.com.br
+#export ORACLE_BASE=/opt/oracle
+#export ORACLE_HOME=$ORACLE_BASE/11.2.0
+#export TNS_ADMIN=$ORACLE_HOME/network/admin
+
+cd $folder
+echo $folder
+./dbaccess64opt &
+#./dbaccess64opt
+sleep 3
+
+echo "******************* START SERVICES DBACCESS [END] ****************************"

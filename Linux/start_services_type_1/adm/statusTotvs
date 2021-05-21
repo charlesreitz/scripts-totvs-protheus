@@ -1,0 +1,92 @@
+#!/bin/sh
+
+#Servicos de producao
+APPS_LIC=/appserver-license/
+APPS_MASTER=/appserver-master/
+APPS_LOAD1=/appserver-load1/
+APPS_LOAD2=/appserver-load2/
+APPS_WS=/appserver-ws/
+APPS_TSS=/totvssped11/
+CTREESERVER=./ctsrvr
+DBACCESS=./dbaccess64opt
+
+export APPS_LIC
+export APPS_MASTER
+export APPS_LOAD1
+export APPS_LOAD2
+export APPS_WS
+export CTREESERVER
+export DBACCESS
+
+#Servicos TESTE
+APPS_TESTE=/appserver-teste/
+export APPS_TESTE
+	
+echo  "Totvs Service Status PRODUCAO "
+
+if ps ax | grep $DBACCESS | grep -v grep > /dev/null
+then
+        echo " DBACCESS            esta rodando..."
+else
+        echo " DBACCESS            esta parado"
+fi
+
+if ps ax | grep $CTREESERVER | grep -v grep > /dev/null
+then
+        echo " CTREESERVER         esta rodando..."
+else
+        echo " CTREESERVER         esta parado"
+fi
+
+if ps ax | grep $APPS_LIC | grep -v grep > /dev/null 
+then
+	echo $" $APPS_LIC esta rodando..."
+else
+	echo $" $APPS_LIC esta parado"
+fi
+
+if ps ax | grep $APPS_MASTER | grep -v grep > /dev/null
+then
+        echo $" $APPS_MASTER  esta rodando..."
+else
+        echo $" $APPS_MASTER  esta parado"
+fi
+
+#if ps ax | grep $APPS_LOAD1 | grep -v grep > /dev/null
+#then
+#        echo $" $APPS_LOAD1   esta rodando..."
+#else
+#        echo $" $APPS_LOAD1   esta parado"
+#fi
+
+#if ps ax | grep $APPS_LOAD2 | grep -v grep > /dev/null
+#then
+#        echo $" $APPS_LOAD2   esta rodando..."
+#else
+#        echo $" $APPS_LOAD2   esta parado"
+#fi
+
+if ps ax | grep $APPS_TSS | grep -v grep > /dev/null
+then
+        echo $" $APPS_TSS       esta rodando..."
+else
+        echo $" $APPS_TSS       esta parado"
+fi
+
+if ps ax | grep $APPS_WS | grep -v grep > /dev/null
+then
+        echo $" $APPS_WS      esta rodando..."
+else
+        echo $" $APPS_WS      esta parado"
+fi
+
+echo  "Totvs Service Status TESTE"
+
+if ps ax | grep $APPS_TESTE | grep -v grep > /dev/null
+then
+        echo $" $APPS_TESTE   esta rodando..."
+else
+        echo $" $APPS_TESTE   esta parado"
+fi
+
+echo "Fim status"

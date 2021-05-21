@@ -1,0 +1,12 @@
+#
+#DERRUBAR SERVICOS
+#
+
+echo "******************* STOP SERVICES TOTVS TESTE [BEGIN] ****************************"
+#
+#Derrubar Server Protheus TESTE
+#
+killall /totvs11/microsiga/protheus/bin/appserver-ws/./appsrvlinux
+sleep 5
+
+echo "******************* STOP SERVICES TOTVS TESTE [END] ****************************"

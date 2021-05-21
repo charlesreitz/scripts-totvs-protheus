@@ -1,0 +1,13 @@
+echo "******************* START SERVICES TOTVS TESTE [BEGIN] ****************************"
+
+umask 000
+ulimit -n 65535
+ulimit -s 1024
+
+#
+# Inicializa o servico da base TESTE
+#
+/totvs11/microsiga/protheus/bin/appserver-ws/./appsrvlinux &
+sleep 3
+echo "******************* START SERVICES TOTVS TESTE [END] ****************************"
+

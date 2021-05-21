@@ -1,0 +1,60 @@
+#
+#DERRUBAR SERVICOS
+#
+
+echo "******************* STOP SERVICES TOTVS [BEGIN] ****************************"
+
+#
+#Derrubar Server Protheus LOADS
+#
+#killall /totvs11/microsiga/protheus/bin/appserver-load1/./appsrvlinux
+#killall /totvs11/microsiga/protheus/bin/appserver-load2/./appsrvlinux
+#sleep 2
+
+#
+#Derrubar Server Protheus MASTER
+#
+killall /totvs11/microsiga/protheus/bin/appserver-master/./appsrvlinux
+sleep 8
+
+#
+#Derrubar Server Protheus TSS
+#
+killall /totvs11/microsiga/protheus/totvssped11/bin/appserver/./appsrvlinux
+sleep 3
+
+#
+#Derrubar Server Protheus WS
+#
+killall /totvs11/microsiga/protheus/bin/appserver-ws/./appsrvlinux
+sleep 3
+
+
+#
+#Derrubar Server Protheus TESTE
+#
+killall /totvs11/microsiga/protheus/bin/appserver-teste/./appsrvlinux
+sleep 5
+
+
+#
+#Derrubar dbAccess
+#
+killall /totvs11/microsiga/dbaccess/multi/./dbaccess64opt
+sleep 8
+
+#
+#Derrubar License Server Protheus
+#
+killall /totvs11/microsiga/protheus/bin/appserver-license/./appsrvlinux
+sleep 5
+
+#
+#Derrubar Servico CtreeServer
+#
+cd /totvs11/microsiga/protheus/bin/ctreeserver/client/
+./ctstop -auto
+cd /totvs11/microsiga/adm/
+sleep 10
+
+echo "******************* STOP SERVICES TOTVS [END] ****************************"

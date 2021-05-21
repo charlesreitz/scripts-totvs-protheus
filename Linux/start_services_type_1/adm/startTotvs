@@ -1,0 +1,71 @@
+echo "******************* START SERVICES TOTVS [BEGIN] ****************************"
+#
+#Carregar Servico CtreeServer
+#
+
+#export LD_LIBRARY_PATH=/totvs11/microsiga/protheus/bin/ctreeserver/server/ 
+ulimit -n 65535
+ulimit -s 1024
+
+cd /totvs11/microsiga/protheus/bin/ctreeserver/server/
+./ctsrvr &
+sleep 5
+
+#
+#Carregar Servico Totvs
+#
+
+#
+#Carregar License Server Protheus License
+#
+/totvs11/microsiga/protheus/bin/appserver-license/./appsrvlinux &
+sleep 3
+
+#
+#Carregar dbAccess
+#
+export LD_LIBRARY_PATH=/opt/oracle/11.2.0/lib/
+export ORACLE_HOSTNAME=totvs.polymport.com.br
+export ORACLE_BASE=/opt/oracle
+export ORACLE_HOME=$ORACLE_BASE/11.2.0
+export TNS_ADMIN=$ORACLE_HOME/network/admin
+
+cd /totvs11/microsiga/dbaccess/multi/
+./dbaccess64opt &
+sleep 3
+
+cd /totvs11/microsiga/
+#
+#Carregar Server Protheus MASTER
+#
+/totvs11/microsiga/protheus/bin/appserver-master/./appsrvlinux &
+sleep 3
+
+#
+#Carregar Server Protheus LOAD BALANCE
+#
+#/totvs11/microsiga/protheus/bin/appserver-load1/./appsrvlinux &
+#/totvs11/microsiga/protheus/bin/appserver-load2/./appsrvlinux &
+#sleep 3
+
+#
+#Carregar Server Protheus TSS
+#
+/totvs11/microsiga/protheus/totvssped11/bin/appserver/./appsrvlinux &
+sleep 3
+
+#
+# Inicializa o servico do WS
+#
+/totvs11/microsiga/protheus/bin/appserver-ws/./appsrvlinux &
+sleep 3
+
+
+#
+# Inicializa o servico da base TESTE
+#
+/totvs11/microsiga/protheus/bin/appserver-teste/./appsrvlinux &
+sleep 3
+
+
+echo "******************* START SERVICES TOTVS [END] ****************************"

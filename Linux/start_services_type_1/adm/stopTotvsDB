@@ -1,0 +1,14 @@
+#
+#DERRUBAR SERVICOS
+#
+
+echo "******************* STOP SERVICES DBACCESS [BEGIN] ****************************"
+
+#
+#Derrubar dbAccess
+#
+killall /totvs11/microsiga/dbaccess/multi/./dbaccess64opt
+sleep 8
+
+
+echo "******************* STOP SERVICES DBACCESS [END] ****************************"

@@ -1,0 +1,15 @@
+echo "******************* START SERVICES CTREE [BEGIN] ****************************"
+#
+#Carregar Servico CtreeServer
+#
+
+#export LD_LIBRARY_PATH=/totvs11/microsiga/protheus/bin/ctreeserver/server/ 
+ulimit -n 65535
+ulimit -s 1024
+
+cd /totvs11/microsiga/protheus/bin/ctreeserver/server/
+./ctsrvr &
+sleep 5
+
+
+echo "******************* START SERVICES CTREE [END] ****************************"

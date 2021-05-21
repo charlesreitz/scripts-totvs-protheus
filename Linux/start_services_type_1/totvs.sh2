@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+#Descricao: 	| Script para inicializar o CtreeServer
+#Versao: 	| 1.0
+#Data Criacao:	| 30/12/2012
+#Data Atualizac:| 
+#Criado por:	| Charles Reitz - TSC 679
+
+cLocal="/totvs11" #local da instalacao da pasta TOTVS
+cLocCtree="" #local instalacao ctree, em branco nao considera
+cLocAppMas="" #local instalacao appserver master, em branco nao considera
+cLocAppSl1="" #local instalacao appserver slave 1, em branco nao considera
+cLocAppSl2="" #local instalacao appserver slave2, em branco nao considera
+cLocAppSl3="" #local instalacao appserver slave3, em branco nao considera
+
+#Faz a Verificao do Status do Servico
+function status(){
+local li=""
+local msgOn=""
+local msgOff=""
+
+echo "Verificando Status de $1"
+
+if [ "$1" == "ctree" ];then
+	msgOn="Ctree ONLINE"
+	msgOff="Ctree OFFLINE"
+	li=`ps axu | grep ctsrvr | grep -v grep`;
+	echo "$li"
+	if [ "$li" ] && [ $2 == "stop" ];then
+		echo $msgOn #online
+		return 
+	elif [ "$li" ] && [ $2 == "start" ];then
+		echo $msgOn #online
+		exit
+	elif [ "$2" == "stop" ];then
+		echo $msgOff #offline
+		exit	
+	elif [ "$2" == "start"];then
+		echo $msgOff #offline
+		return
+	fi
+	
+elif [ "$1" == "totvs" ];then 
+	echo "totvs"
+else
+	echo "Necessario informar o programa para verificar o status"
+fi
+
+} 
+
+function fCtree(){
+	#Ctree Start
+	if [ "$2" == "start" -o "$2" == "s" ]  ;then
+		status $1 $2
+		echo "Iniciando o CtreeServer..."
+		export LD_LIBRARY_PATH = $cLocal 
+		ulimit -n 65535
+		cd $cLocal/ctreeserver/server/
+		./ctsrvr &
+		cd $cLocal/scripts
+		sleep 1
+		echo "Inicializado!"
+		exit 
+	#Ctree Stop
+	elif [ "$2" == "stop" ] ;then
+		status $1 $2 #chama funcao para verificar se esta online
+		echo "Parando CtreeServer"
+		killall ctsrvr
+		sleep 2		
+		echo "Finalizado!"
+		exit
+	else
+		echo "Comando nao encontrado. Digite -h para ajuda"
+		exit	
+	fi
+}
+
+#Help para ajudar o user
+if [ "$1" == "--help" ] || [ "$1" == "-h" ] || [ ! $1 ] || [ ! $2 ]; then
+	echo "<nome_do_script> <argumento1> <argumento2>"
+	echo "exemplo ./totvs ctree start"
+	echo "<argumento1> | programa"
+	echo "<argumento2> | acao"
+	echo ""
+	echo "***************************************************************"
+	echo "start	| inicia servico"
+	echo "stop	| finaliza servico"
+	echo "restart	| reinicia servico"
+	echo "***************************************************************"
+	echo ""
+	echo "==============================================================="
+	echo "obs:	| acima ade 65 usuario necessario entrar em contato"
+	echo "		  com a TOTVS para solicitar licenca do ctreeserver"
+	echo "==============================================================="
+	Xdialog --title "exemplo" --center --stdout --yesno
+	exit
+#Ctree
+elif [ "$1" == "ctree" ];then
+	fCtree $1 $2
+fi
+	
+
